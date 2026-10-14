@@ -1,4 +1,4 @@
-export type Language = "en" | "zh";
+export type Language = "es" | "en" | "zh" | "pt" | "fr" | "de" | "it" | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr";
 
 export function getLocale(lang: Language): string {
   return lang === "zh" ? "zh-CN" : "en-US";

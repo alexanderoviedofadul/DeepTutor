@@ -74,7 +74,7 @@ type Catalog = {
 
 type UiSettings = {
   theme: "light" | "dark" | "glass" | "snow";
-  language: "en" | "zh";
+  language: "es" | "en" | "zh" | "pt" | "fr" | "de" | "it" | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr";
 };
 
 type ProviderOption = {
@@ -234,12 +234,12 @@ function formatContextWindowSource(
 
 function formatContextWindowUpdatedAt(
   value: string | undefined,
-  language: "en" | "zh",
+  language: "es" | "en" | "zh" | "pt" | "fr" | "de" | "it" | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr",
 ): string {
   if (!value) return "";
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return parsed.toLocaleString(language === "zh" ? "zh-CN" : "en-US", {
+  return parsed.toLocaleString(language === "zh" ? "zh-CN" : language === "es" ? "es-CO" : "en-US", {
     dateStyle: "medium",
     timeStyle: "short",
   });
@@ -585,7 +585,7 @@ function SettingsPageContent() {
   const [theme, setTheme] = useState<"light" | "dark" | "glass" | "snow">(
     "light",
   );
-  const [language, setLanguage] = useState<"en" | "zh">("en");
+  const [language, setLanguage] = useState<"es" | "en" | "zh" | "pt" | "fr" | "de" | "it" | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr">("es");
   const [catalog, setCatalog] = useState<Catalog>(defaultCatalog());
   const [draft, setDraft] = useState<Catalog>(defaultCatalog());
   const [activeService, setActiveService] = useState<ServiceName>("llm");
@@ -703,7 +703,7 @@ function SettingsPageContent() {
 
   const persistUi = async (
     nextTheme: "light" | "dark" | "glass" | "snow",
-    nextLanguage: "en" | "zh",
+    nextLanguage: "es" | "en" | "zh" | "pt" | "fr" | "de" | "it" | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr",
   ) => {
     await fetch(apiUrl("/api/v1/settings/ui"), {
       method: "PUT",
@@ -720,7 +720,7 @@ function SettingsPageContent() {
     await persistUi(nextTheme, language);
   };
 
-  const updateLanguage = async (nextLanguage: "en" | "zh") => {
+  const updateLanguage = async (nextLanguage: "es" | "en" | "zh" | "pt" | "fr" | "de" | "it" | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr") => {
     setLanguage(nextLanguage);
     writeStoredLanguage(nextLanguage);
     await persistUi(theme, nextLanguage);
@@ -1101,21 +1101,26 @@ function SettingsPageContent() {
             <span className="text-[12px] text-[var(--muted-foreground)]">
               {t("Language")}
             </span>
-            <div className="flex gap-0.5 rounded-lg bg-[var(--muted)] p-0.5">
-              {(["en", "zh"] as const).map((v) => (
-                <button
-                  key={v}
-                  onClick={() => updateLanguage(v)}
-                  className={`rounded-md px-2.5 py-1 text-[12px] transition-all ${
-                    language === v
-                      ? "bg-[var(--card)] font-medium text-[var(--foreground)] shadow-sm"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-                  }`}
-                >
-                  {v === "en" ? t("language.english") : t("language.chinese")}
-                </button>
-              ))}
-            </div>
+            <select
+              value={language}
+              onChange={(e) => updateLanguage(e.target.value as any)}
+              className="rounded-md border border-[var(--border)] bg-[var(--card)] px-2.5 py-1 text-[12px] font-medium text-[var(--foreground)] shadow-sm cursor-pointer outline-none focus:border-[var(--ring)]"
+            >
+              <option value="es">🇨🇴 Español</option>
+              <option value="en">🇺🇸 English</option>
+              <option value="pt">🇧🇷 Português</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="it">🇮🇹 Italiano</option>
+              <option value="zh">🇨🇳 中文</option>
+              <option value="ja">🇯🇵 日本語</option>
+              <option value="ko">🇰🇷 한국어</option>
+              <option value="ru">🇷🇺 Русский</option>
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="hi">🇮🇳 हिन्दी</option>
+              <option value="bn">🇧🇩 বাংলা</option>
+              <option value="tr">🇹🇷 Türkçe</option>
+            </select>
           </div>
         </div>
 
@@ -1150,7 +1155,7 @@ function SettingsPageContent() {
                 const parsed = new Date(ts);
                 if (Number.isNaN(parsed.getTime())) return "";
                 return parsed.toLocaleTimeString(
-                  language === "zh" ? "zh-CN" : "en-US",
+                  language === "zh" ? "zh-CN" : language === "es" ? "es-CO" : "en-US",
                   { hour: "2-digit", minute: "2-digit" },
                 );
               })()}

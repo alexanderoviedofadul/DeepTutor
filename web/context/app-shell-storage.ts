@@ -1,6 +1,13 @@
 "use client";
 
-export type AppLanguage = "en" | "zh";
+export type AppLanguage =
+  | "es" | "en" | "zh" | "pt" | "fr" | "de" | "it"
+  | "ja" | "ko" | "ru" | "ar" | "hi" | "bn" | "tr";
+
+const SUPPORTED: AppLanguage[] = [
+  "es", "en", "pt", "fr", "de", "it",
+  "zh", "ja", "ko", "ru", "ar", "hi", "bn", "tr",
+];
 
 export const ACTIVE_SESSION_STORAGE_KEY = "deeptutor.activeSessionId.tab";
 export const LANGUAGE_STORAGE_KEY = "deeptutor-language";
@@ -13,15 +20,20 @@ export const SIDEBAR_COLLAPSED_EVENT = "deeptutor:sidebar-collapsed";
 export function normalizeLanguage(
   value: string | null | undefined,
 ): AppLanguage {
-  return value === "zh" ? "zh" : "en";
+  if (!value) return "es";
+  const s = value.toLowerCase().slice(0, 2);
+  if ((SUPPORTED as readonly string[]).includes(s)) return s as AppLanguage;
+  if (s === "cn") return "zh";
+  // Default: español para Jowalth Academy
+  return "es";
 }
 
 export function readStoredLanguage(): AppLanguage {
-  if (typeof window === "undefined") return "en";
+  if (typeof window === "undefined") return "es";
   try {
     return normalizeLanguage(window.localStorage.getItem(LANGUAGE_STORAGE_KEY));
   } catch {
-    return "en";
+    return "es";
   }
 }
 

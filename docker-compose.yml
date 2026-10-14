@@ -31,9 +31,13 @@ services:
         - BACKEND_PORT=${BACKEND_PORT:-8001}
     container_name: deeptutor
     restart: unless-stopped
+    # Publicados SÓLO en loopback (2026-07-19): estaban en 0.0.0.0, de modo que
+    # respondían desde internet saltándose Caddy, su TLS y su autenticación.
+    # Docker inserta sus reglas por delante de las de INPUT, así que el
+    # cortafuegos del host no los cubría. Caddy sigue llegando por 127.0.0.1.
     ports:
-      - "${BACKEND_PORT:-8001}:${BACKEND_PORT:-8001}"
-      - "${FRONTEND_PORT:-3782}:${FRONTEND_PORT:-3782}"
+      - "127.0.0.1:${BACKEND_PORT:-8001}:${BACKEND_PORT:-8001}"
+      - "127.0.0.1:${FRONTEND_PORT:-3782}:${FRONTEND_PORT:-3782}"
 
     # Load environment variables from .env file
     env_file:
